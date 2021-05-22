@@ -1,11 +1,10 @@
-require('dotenv').config()
 const Koa =  require('koa')
 const Router =  require('@koa/router')
 const Logger = require('koa-logger')
+import { PORT } from './utils/config'
 
 const app = new Koa();
 const router = new Router();
-const port = process.env.PORT
 
 router.get('/', (ctx, next) => {
  ctx.body = 'Hello World!';
@@ -27,6 +26,6 @@ app.use(Logger());
 app.use(router.routes()).use(router.allowedMethods());
 
 // Listen the port
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
