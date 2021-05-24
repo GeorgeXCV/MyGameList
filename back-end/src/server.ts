@@ -1,16 +1,18 @@
-const Koa =  require('koa')
-const Router =  require('@koa/router')
-const Logger = require('koa-logger')
-import { PORT } from './utils/config'
+import Koa, { Context, Next } from 'koa';
+import Router from '@koa/router';
+import Logger from 'koa-logger';
+import { PORT } from './utils/config';
+import userRouter from './routes/user'
+import loginRouter from './routes/login';
 
 const app = new Koa();
 const router = new Router();
 
-router.get('/', (ctx, next) => {
+router.get('/', (ctx: Context) => {
  ctx.body = 'Hello World!';
 });
 
-app.use(async (ctx, next) => {
+app.use(async (ctx: Context, next: Next) => {
     try {
         await next()
     } catch (err) {
@@ -24,6 +26,8 @@ app.use(async (ctx, next) => {
 app.use(Logger());
 // Add routes and response to the OPTIONS requests
 app.use(router.routes()).use(router.allowedMethods());
+app.use(userRouter.routes())
+app.use(loginRouter.routes());
 
 // Listen the port
 app.listen(PORT, () => {
