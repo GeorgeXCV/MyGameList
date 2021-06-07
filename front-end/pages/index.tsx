@@ -4,6 +4,7 @@ import styles from '../styles/Home.module.css'
 import DarkModeSwitch from '../components/DarkModeSwitch'
 import { Text, Button, HStack, Box, useColorModeValue } from '@chakra-ui/react'
 import LoginForm from './login'
+import SignUpForm from './signup'
 
 export default function Home() {
   const colour = useColorModeValue("red.500", "white")
@@ -19,7 +20,7 @@ export default function Home() {
         <Text colour={colour} fontSize="4xl">MyGameList</Text>
         </Box>
         <LoginForm handleLogin={console.log('test')} />
-        <Button colorScheme="green">Sign Up</Button>
+        <SignUpForm handleSignUp={console.log('test')} />
         <DarkModeSwitch />
       </HStack>
     </div>
