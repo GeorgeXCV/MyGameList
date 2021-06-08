@@ -4,6 +4,7 @@ import Logger from 'koa-logger';
 import { PORT } from './utils/config';
 import userRouter from './routes/user'
 import loginRouter from './routes/login';
+import gamesRouter from './routes/games'
 
 const app = new Koa();
 const router = new Router();
@@ -28,6 +29,7 @@ app.use(Logger());
 app.use(router.routes()).use(router.allowedMethods());
 app.use(userRouter.routes())
 app.use(loginRouter.routes());
+app.use(gamesRouter.routes());
 
 // Listen the port
 app.listen(PORT, () => {
