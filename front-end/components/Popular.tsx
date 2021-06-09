@@ -4,8 +4,8 @@ import GameCard from "./GameCard";
 const Popular = ({ games }) => {
     return (
         <Box mt={10}>
-          <Box mb={4}>
-            <Heading size="lg" mb={2}>
+          <Box>
+            <Heading size="lg" paddingLeft={7}>
               Popular Right Now
             </Heading>
           </Box>

@@ -9,14 +9,12 @@ const GameCard = ({ game }) => {
           <Box
             p={4}
             display="flex"
-            alignItems="center"
-            justifyContent="center"
             minHeight={{ base: 250, md: 200 }}
         >
         <NextLink href={`/${game.id}`} passHref>
          <a>
             <Image
-              width={{ md: 150 }}
+              width={{ md: 200 }}
               height={{ md: 225 }}
               objectFit="contain"
               src={game.cover}
@@ -27,13 +25,10 @@ const GameCard = ({ game }) => {
         </NextLink>
           </Box>
           <Box
-            mt={{ base: 2 }}
-            ml={{ md: 6 }}
+            ml={{ md: 8 }}
             display="flex"
             justifyContent="center"
             flexDirection="column"
-            p={4}
-            minWidth="0"
             w="full"
           >
             <NextLink href={`/${game.id}`} passHref>
@@ -50,7 +45,7 @@ const GameCard = ({ game }) => {
            <Text
               mt={2}
               color="gray.500"
-              fontSize="sm"
+              fontSize="md"
               display="flex"
               placeItems="center"
             >
