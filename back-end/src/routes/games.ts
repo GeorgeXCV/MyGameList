@@ -10,4 +10,9 @@ gamesRouter.get('/popular', async (ctx: Context) => {
     ctx.body = rows
 })
 
+gamesRouter.get('/popular-upcoming', async (ctx: Context) => {
+    const findPopularUpcomingGamesQuery = `select * from games WHERE first_release_date > extract(epoch from now()) ORDER BY backlog DESC limit 5;`
+    const { rows } = await query(findPopularUpcomingGamesQuery, null);
+    ctx.body = rows
+})
 export default gamesRouter;
