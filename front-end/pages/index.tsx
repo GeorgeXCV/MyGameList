@@ -6,9 +6,9 @@ import { Text, HStack, Box, useColorModeValue } from '@chakra-ui/react'
 import { GetServerSideProps } from 'next'
 import LoginForm from './login'
 import SignUpForm from './signup'
-import Popular from '../components/Popular'
+import GameGrid from '../components/GameGrid'
 
-export default function Home ({ popularGames }) {
+export default function Home ({ popularGames, popularUpcomingGames }) {
   const colour = useColorModeValue("red.500", "white")
   return (
     <div className={styles.container}>
@@ -25,13 +25,14 @@ export default function Home ({ popularGames }) {
         <SignUpForm handleSignUp={console.log('test')} />
         <DarkModeSwitch />
       </HStack>
-     <Popular games={popularGames}/>
+     <GameGrid title={"Popular Right Now"} games={popularGames}/>
+     <GameGrid title={"Popular Upcoming"} games={popularUpcomingGames}/>
     </div>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch(`${process.env.host}popular`)
-  const popularGames = await res.json()  
-  return { props: { popularGames } }
+  const popularGames = await (await fetch(`${process.env.host}popular`)).json();
+  const popularUpcomingGames = await (await fetch(`${process.env.host}popular-upcoming`)).json();
+  return { props: { popularGames, popularUpcomingGames} }
 }
