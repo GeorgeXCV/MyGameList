@@ -44,7 +44,7 @@ export default function SignUp({ handleSignUp }) {
     
     return (
       <>
-      <Button onClick={onOpen} colorScheme="green">Sign Up</Button>
+      <Button onClick={onOpen} colorScheme="green" minWidth={90}>Sign Up</Button>
 
       <Modal
           isOpen={isOpen}

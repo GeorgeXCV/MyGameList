@@ -4,6 +4,7 @@ import styles from '../styles/Home.module.css'
 import DarkModeSwitch from '../components/DarkModeSwitch'
 import { Text, HStack, Box, useColorModeValue } from '@chakra-ui/react'
 import { GetServerSideProps } from 'next'
+import SearchBar from '../components/SearchBar'
 import LoginForm from './login'
 import SignUpForm from './signup'
 import GameGrid from '../components/GameGrid'
@@ -21,6 +22,7 @@ export default function Home ({ popularGames, popularUpcomingGames }) {
         <Box w="300px">
         <Text colour={colour} fontSize="4xl">MyGameList</Text>
         </Box>
+        <SearchBar />
         <LoginForm handleLogin={console.log('test')} />
         <SignUpForm handleSignUp={console.log('test')} />
         <DarkModeSwitch />

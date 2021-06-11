@@ -42,7 +42,7 @@ export default function LoginForm({ handleLogin }) {
     
     return (
       <>
-      <Button onClick={onOpen} colorScheme="blue">Login</Button>
+      <Button onClick={onOpen} colorScheme="blue" minWidth={90}>Login</Button>
 
       <Modal
           isOpen={isOpen}
