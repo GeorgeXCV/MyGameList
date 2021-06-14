@@ -1,4 +1,4 @@
-import React from 'react';
+import { useContext } from 'react';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,6 +17,9 @@ import {
   ModalCloseButton,
   useDisclosure
 } from '@chakra-ui/react';
+import signupService from '../services/signup'
+import { AuthContext } from './index';
+
 
 const schema = yup.object().shape({
   email: yup.string().required('Email is required.').email('Must be a valid email address.'),
@@ -30,18 +33,22 @@ type SignUpFormInputs = {
   password: string;
 };
 
-export default function SignUp({ handleSignUp }) {
+export default function SignUp (props: any) {
   const { register, handleSubmit, formState:{ errors }  } = useForm<SignUpFormInputs>({
     mode: 'onBlur',
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (values: SignUpFormInputs) => {
-    handleSignUp(values.email, values.username, values.password)
-  }
-  
+  const { setAuthSubmitted } = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure()
-    
+
+  const handleSignUp = async (values: SignUpFormInputs) => {
+    const user = await signupService.signup(values)
+    window.localStorage.setItem('gameUser', JSON.stringify(user))
+    setAuthSubmitted(true)
+    onClose();
+  }
+
     return (
       <>
       <Button onClick={onOpen} colorScheme="green" minWidth={90}>Sign Up</Button>
@@ -83,7 +90,7 @@ export default function SignUp({ handleSignUp }) {
                   </FormControl>
                 </ModalBody>
             <ModalFooter>
-              <Button onClick={handleSubmit(onSubmit)} disabled={!!errors.email || !!errors.username || !!errors.password} type="submit" colorScheme="blue" width="full" mr={3}>
+              <Button onClick={handleSubmit(handleSignUp)} disabled={!!errors.email || !!errors.username || !!errors.password} type="submit" colorScheme="blue" width="full" mr={3}>
                 Sign Up
               </Button>
               <Button onClick={onClose} colorScheme="red">Cancel</Button>

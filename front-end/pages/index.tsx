@@ -1,3 +1,4 @@
+import { createContext, useState, useEffect } from 'react';
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
@@ -8,8 +9,22 @@ import SearchBar from '../components/SearchBar'
 import LoginForm from './login'
 import SignUpForm from './signup'
 import GameGrid from '../components/GameGrid'
+import UserMenu from '../components/UserMenu';
+
+export const AuthContext = createContext(null)
 
 export default function Home ({ popularGames, popularUpcomingGames }) {
+  const [authSubmitted, setAuthSubmitted] = useState(false)
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const userJSON = window.localStorage.getItem('gameUser')
+    if (userJSON) {
+      const user = JSON.parse(userJSON)
+      setUser(user)
+    }
+  }, [authSubmitted])
+
   const colour = useColorModeValue("red.500", "white")
   return (
     <div className={styles.container}>
@@ -23,8 +38,13 @@ export default function Home ({ popularGames, popularUpcomingGames }) {
         <Text colour={colour} fontSize="4xl">MyGameList</Text>
         </Box>
         <SearchBar />
-        <LoginForm handleLogin={console.log('test')} />
-        <SignUpForm handleSignUp={console.log('test')} />
+        {user !== null
+          ? <UserMenu user={user.username} />
+          : <AuthContext.Provider value={{ setAuthSubmitted }}> 
+            <LoginForm />
+            <SignUpForm /> 
+            </AuthContext.Provider>
+        }
         <DarkModeSwitch />
       </HStack>
      <GameGrid title={"Popular Right Now"} games={popularGames}/>
@@ -34,7 +54,7 @@ export default function Home ({ popularGames, popularUpcomingGames }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const popularGames = await (await fetch(`${process.env.host}popular`)).json();
-  const popularUpcomingGames = await (await fetch(`${process.env.host}popular-upcoming`)).json();
+  const popularGames = await (await fetch(`${process.env.NEXT_PUBLIC_HOST}popular`)).json();
+  const popularUpcomingGames = await (await fetch(`${process.env.NEXT_PUBLIC_HOST}popular-upcoming`)).json();
   return { props: { popularGames, popularUpcomingGames} }
 }

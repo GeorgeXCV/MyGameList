@@ -3,11 +3,12 @@ import { query } from '../database/postgres-db'
 import { Context } from "koa";
 import Router from '@koa/router'
 import bodyParser from 'koa-bodyparser';
+import generateAuthToken from '../middleware/auth';
 
-const userRouter = new Router()
-userRouter.use(bodyParser())
+const signUpRouter = new Router()
+signUpRouter.use(bodyParser())
 
-userRouter.post('/user', async (ctx: Context) => {
+signUpRouter.post('/signup', async (ctx: Context) => {
     const { username, email, password} = ctx.request.body
 
     if (!username) {
@@ -20,6 +21,8 @@ userRouter.post('/user', async (ctx: Context) => {
 
     if (!password) {
         ctx.throw(400, 'Password is required')
+    } else if (password.length < 8) {
+        ctx.throw(400, 'Password must be at least 8 characters long.')
     }
 
     try {
@@ -34,11 +37,11 @@ userRouter.post('/user', async (ctx: Context) => {
         returning *
         `
         const user = await query(createUserQuery, [username, email, hashedPassword])
-        // Return user
-        ctx.body = user;    
+        // Create token for user and return it
+        ctx.body = generateAuthToken(user.rows)    
     } catch (error) {
         ctx.throw(`Error registering user. Error: ${error}`)
     }
 })
 
-export default userRouter;
+export default signUpRouter;

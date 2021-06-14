@@ -1,5 +1,5 @@
-import React from 'react';
 import * as yup from 'yup';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -17,6 +17,8 @@ import {
   ModalCloseButton,
   useDisclosure
 } from '@chakra-ui/react';
+import loginService from '../services/login'
+import { AuthContext } from './index';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required.').min(3, 'Usernames are at least 3 characters long.'),
@@ -28,18 +30,22 @@ type LoginFormInputs = {
   password: string;
 };
 
-export default function LoginForm({ handleLogin }) {
+export default function LoginForm() {
   const { register, handleSubmit, formState:{ errors }  } = useForm<LoginFormInputs>({
     mode: 'onBlur',
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (values: LoginFormInputs) => {
-    handleLogin(values.username, values.password)
+  const { setAuthSubmitted } = useContext(AuthContext);
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const handleLogin = async (credentials: LoginFormInputs) => {
+    const user = await loginService.login(credentials)
+    window.localStorage.setItem('gameUser', JSON.stringify(user))
+    setAuthSubmitted(true)
+    onClose();
   }
   
-  const { isOpen, onOpen, onClose } = useDisclosure()
-    
     return (
       <>
       <Button onClick={onOpen} colorScheme="blue" minWidth={90}>Login</Button>
@@ -73,7 +79,7 @@ export default function LoginForm({ handleLogin }) {
                   </FormControl>
                 </ModalBody>
             <ModalFooter>
-              <Button onClick={handleSubmit(onSubmit)} disabled={!!errors.username || !!errors.password} type="submit" colorScheme="blue" width="full" mr={3}>
+              <Button onClick={handleSubmit(handleLogin)} disabled={!!errors.username || !!errors.password} type="submit" colorScheme="blue" width="full" mr={3}>
                 Sign In
               </Button>
               <Button onClick={onClose} colorScheme="red">Cancel</Button>

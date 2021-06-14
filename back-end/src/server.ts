@@ -1,12 +1,14 @@
 import Koa, { Context, Next } from 'koa';
+import cors from '@koa/cors'
 import Router from '@koa/router';
 import Logger from 'koa-logger';
 import { PORT } from './utils/config';
-import userRouter from './routes/user'
+import signUpRouter from './routes/signup'
 import loginRouter from './routes/login';
 import gamesRouter from './routes/games'
 
 const app = new Koa();
+app.use(cors());
 const router = new Router();
 
 router.get('/', (ctx: Context) => {
@@ -27,7 +29,7 @@ app.use(async (ctx: Context, next: Next) => {
 app.use(Logger());
 // Add routes and response to the OPTIONS requests
 app.use(router.routes()).use(router.allowedMethods());
-app.use(userRouter.routes())
+app.use(signUpRouter.routes())
 app.use(loginRouter.routes());
 app.use(gamesRouter.routes());
 

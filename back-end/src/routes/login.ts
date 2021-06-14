@@ -1,10 +1,9 @@
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '../utils/config'
 import { query } from '../database/postgres-db'
 import { Context } from "koa";
 import Router from '@koa/router'
 import bodyParser from 'koa-bodyparser';
+import generateAuthToken from '../middleware/auth';
 
 const loginRouter = new Router()
 loginRouter.use(bodyParser())
@@ -19,7 +18,6 @@ loginRouter.post('/login', async (ctx: Context) => {
     // Query Postgres
     const findUserQuery = `select * from users where username = $1`
     const { rows } = await query(findUserQuery, [username]);
-
     // Compare password to password hash
     const passwordIsCorrect = rows[0].password === null ? false : await bcrypt.compare(password, rows[0].password);
 
@@ -28,13 +26,7 @@ loginRouter.post('/login', async (ctx: Context) => {
     }
 
     // Create token for user and return it
-    const userForToken = {
-        username: rows[0].username,
-        id: rows[0].id
-    }
-
-    const token = jwt.sign(userForToken, JWT_SECRET)
-    ctx.body = { token, username: username}
+    ctx.body = generateAuthToken(rows)
 })
 
 export default loginRouter;
