@@ -18,7 +18,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react';
 import loginService from '../services/login'
-import { AuthContext } from './index';
+import { AuthContext } from '../pages/_app';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required.').min(3, 'Usernames are at least 3 characters long.'),

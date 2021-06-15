@@ -18,7 +18,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react';
 import signupService from '../services/signup'
-import { AuthContext } from './index';
+import { AuthContext } from '../pages/_app';
 
 
 const schema = yup.object().shape({

@@ -1,7 +1,7 @@
 import { Button, Menu, MenuButton, MenuList, MenuGroup, MenuItem } from "@chakra-ui/react"
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useContext } from 'react';
-import { AuthContext } from '../pages/index';
+import { AuthContext } from '../pages/_app';
 
 const UserMenu = ({ user }) => {
     const { setAuthSubmitted } = useContext(AuthContext);
