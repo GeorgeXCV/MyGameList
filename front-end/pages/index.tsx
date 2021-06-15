@@ -10,6 +10,7 @@ import LoginForm from './login'
 import SignUpForm from './signup'
 import GameGrid from '../components/GameGrid'
 import UserMenu from '../components/UserMenu';
+import GameListPrompt from '../components/GameListPrompt';
 
 export const AuthContext = createContext(null)
 
@@ -18,16 +19,20 @@ export default function Home ({ popularGames, popularUpcomingGames }) {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
+    setAuthSubmitted(false)
     const userJSON = window.localStorage.getItem('gameUser')
     if (userJSON) {
       const user = JSON.parse(userJSON)
       setUser(user)
+    } else {
+      setUser(null)
     }
-  }, [authSubmitted])
+  }, [authSubmitted === true])
 
   const colour = useColorModeValue("red.500", "white")
   return (
     <div className={styles.container}>
+    <AuthContext.Provider value={{ setAuthSubmitted }}> 
     <Head>
       <title>MyGameList</title>
       <meta name="description" content="Track games you are currently playing" />
@@ -39,16 +44,23 @@ export default function Home ({ popularGames, popularUpcomingGames }) {
         </Box>
         <SearchBar />
         {user !== null
-          ? <UserMenu user={user.username} />
-          : <AuthContext.Provider value={{ setAuthSubmitted }}> 
+          ? 
+            <UserMenu user={user.username} />
+           
+          : <>
             <LoginForm />
             <SignUpForm /> 
-            </AuthContext.Provider>
+            </>  
         }
         <DarkModeSwitch />
       </HStack>
+     {user !== null
+        ? <GameGrid title={"What To Play"} games={popularGames}/>
+        : <GameListPrompt />
+     }
      <GameGrid title={"Popular Right Now"} games={popularGames}/>
      <GameGrid title={"Popular Upcoming"} games={popularUpcomingGames}/>
+     </AuthContext.Provider>
     </div>
   )
 }
