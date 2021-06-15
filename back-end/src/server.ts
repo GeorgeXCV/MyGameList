@@ -11,10 +11,6 @@ const app = new Koa();
 app.use(cors());
 const router = new Router();
 
-router.get('/', (ctx: Context) => {
- ctx.body = 'Hello World!';
-});
-
 app.use(async (ctx: Context, next: Next) => {
     try {
         await next()

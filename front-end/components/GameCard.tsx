@@ -28,7 +28,7 @@ const GameCard = ({ game }) => {
             display="flex"
             minHeight={{ base: 250, md: 200 }}
         >
-        <NextLink href={`/${game.id}`} passHref>
+        <NextLink href={`game/${game.id}`} passHref>
          <a>
             <Image
               width={{ md: 200 }}
@@ -48,7 +48,7 @@ const GameCard = ({ game }) => {
             flexDirection="column"
             w="full"
           >
-            <NextLink href={`/${game.id}`} passHref>
+            <NextLink href={`game/${game.id}`} passHref>
               <Link
                 display="block"
                 fontSize="xl"
