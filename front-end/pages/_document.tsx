@@ -13,9 +13,6 @@ export default class Document extends NextDocument {
           <Main />
           <NextScript />
         </body>
-        <footer>
-          <p>Placeholder footer</p>
-        </footer>
       </Html>
     )
   }
