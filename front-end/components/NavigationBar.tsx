@@ -1,4 +1,5 @@
 import {  HStack, Box, Text, useColorModeValue } from '@chakra-ui/react'
+import Link from 'next/link'
 import DarkModeSwitch from './DarkModeSwitch';
 import SearchBar from './SearchBar'
 import UserMenu from './UserMenu';
@@ -11,7 +12,9 @@ export default function NavigationBar ({ user }) {
     return (
         <HStack spacing="24px" paddingTop="5">
             <Box w="300px">
-            <Text colour={colour} fontSize="4xl">MyGameList</Text>
+                <Link href="/">
+                 <Text colour={colour} fontSize="4xl" cursor={"pointer"}>MyGameList</Text>
+                </Link>
             </Box>
             <SearchBar />
             {user !== null
