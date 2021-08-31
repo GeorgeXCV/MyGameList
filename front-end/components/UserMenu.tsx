@@ -18,7 +18,7 @@ const UserMenu = ({ user }) => {
         </MenuButton>
         <MenuList>
           <MenuGroup>
-            <MenuItem>My List</MenuItem>
+            <MenuItem onClick={()=> window.location.href=`/user/${user}`}>My List</MenuItem>
             <MenuItem>Settings</MenuItem>
             <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
           </MenuGroup>
