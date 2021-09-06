@@ -4,12 +4,13 @@ import { createContext, useState, useEffect } from 'react';
 import NavigationBar from '../components/NavigationBar';
 
 export const AuthContext = createContext(null)
+export const UserContext = createContext(null)
 
 export default function App({ Component, pageProps }: AppProps) {
   const [authSubmitted, setAuthSubmitted] = useState(false)
   const [user, setUser] = useState(null)
 
-  useEffect(() => {
+  const fetchUser = () => {
     setAuthSubmitted(false)
     const userJSON = window.localStorage.getItem('gameUser')
     if (userJSON) {
@@ -18,14 +19,20 @@ export default function App({ Component, pageProps }: AppProps) {
     } else {
       setUser(null)
     }
+  }
+
+  useEffect(() => {
+    fetchUser();
   }, [authSubmitted === true])
 
   return (
     <ChakraProvider>
      <AuthContext.Provider value={{ setAuthSubmitted }}> 
-     <NavigationBar user={user} />
-      <Component {...pageProps} />
-      </AuthContext.Provider>
+      <UserContext.Provider value={user}>
+        <NavigationBar user={user} />
+        <Component {...pageProps} />
+      </UserContext.Provider>
+     </AuthContext.Provider>
     </ChakraProvider>
   )
 }

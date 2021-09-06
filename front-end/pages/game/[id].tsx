@@ -1,49 +1,90 @@
 import { GetServerSideProps } from 'next'
-import { Box, Heading, Image, Text } from "@chakra-ui/react";
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { Box, Divider, Heading, Image, Link, Text, Menu, MenuButton, IconButton, MenuList, MenuItem  } from "@chakra-ui/react";
 import GameScore from '../../components/GameScore';
+import WantToPlayButton from '../../components/WantToPlayButton';
 import getReleaseDate from '../../services/date';
 import * as dayjs from 'dayjs'
 
 export default function Game ({ game }) {
+ 
     return (
-        <Box>
+        <>
+        <Box d={"flex"} alignItems={"center"} paddingLeft={255}>
             <Box>
                 <Image
                 src={game.cover}
                 fallbackSrc={`https://via.placeholder.com/175x200?text=${game.name}`}
                 alt="Game Cover"
+                minWidth={185}
+                minHeight={275}
                 />
-                <GameScore score={game.score} />
+                <Box>
+                <WantToPlayButton game={game} />  
+                    <Menu>
+                        <MenuButton
+                            as={IconButton}
+                            aria-label="Options"
+                            icon={<ChevronDownIcon />}
+                            variant="outline"
+                            background="green"
+                        />
+                        <MenuList>
+                            <MenuItem>
+                                Currently Playing
+                            </MenuItem>
+                            <MenuItem>
+                                Played
+                            </MenuItem>
+                            <MenuItem>
+                                Dropped                            
+                            </MenuItem>
+                            <MenuItem>
+                                Want to Play
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+            </Box>
+                <GameScore score={game.score} />   
                 <Text>{game['scored by']}</Text>
-            </Box>
-
-            <Box>
-                <Heading>{game.name}</Heading>
-                <Text>{game.description}</Text>
+             </Box>
+             <Box alignSelf={"start"} width={"75%"}>
+             <Heading>{game.name}</Heading>
+                <Text>{getReleaseDate(dayjs.unix(game.first_release_date).format('DD MMM, YYYY'))}</Text>
                 <Text>{game.platforms}</Text>
-                <Text>Developer: {game.developer}</Text>
-                <Text>Release Date: {getReleaseDate(dayjs.unix(game.first_release_date).format('DD MMM, YYYY'))}</Text>
-                <Text>Publisher: {game.publisher}</Text>
-                <Text>Genres: {game.genre}</Text>
-                <Text>Game Modes: {game['game modes']}</Text>
+                <Text>{game.description}</Text>
+                <Divider/>   
+                <Heading as="h5" size="sm" padding={3}> Developer <Link color="red" paddingLeft={1}>{game.developer}</Link> </Heading>  
+                <Divider/>
+                <Heading as="h5" size="sm" padding={3}> Publisher <Link color="red" paddingLeft={1}>{game.publisher}</Link> </Heading>  
+                <Divider/>
+                <Heading as="h5" size="sm" padding={3}> Genres <Link color="red" paddingLeft={1}>{game.genre}</Link> </Heading>  
+                <Divider/>
+                <Heading as="h5" size="sm" padding={3}> Game Modes <Link color="red" paddingLeft={1}>{game['game modes']}</Link> </Heading>  
                 {game.series !== null &&
-                    <Text>Series: {game.series}</Text>
+                   <>
+                   <Divider/>
+                   <Heading as="h5" size="sm" padding={3}> Series <Link color="red" paddingLeft={1}>{game.series}</Link> </Heading>  
+                   </>
                 }
-            </Box>
-            <Box>
-                <Heading>Reviews</Heading>
-                {game['user reviews'] !== null
-                    ? <Text>{game['user reviews']}</Text>
-                    : <Text>No reviews have been submitted for this title. Be the first to make a review here!</Text>
-                }
-            </Box>
+             </Box>
         </Box>
+       
+       <Box alignItems={"center"} paddingLeft={255}>
+           <Heading>Reviews</Heading>
+           {game['user reviews'] !== null
+               ? <Text>{game['user reviews']}</Text>
+               : <Text>No reviews have been submitted for this title. Be the first to make a review here!</Text>
+           }
+       </Box>
+       </>
     )
 }
 
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const game = await (await fetch(`${process.env.NEXT_PUBLIC_HOST}game/${params.id}`)).json();
+    // const status = user ? await (await fetch(`${process.env.NEXT_PUBLIC_HOST}backlog/${user.username}`)) : false
     return { props: { game } }
   }
   
