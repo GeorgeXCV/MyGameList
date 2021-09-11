@@ -1,16 +1,20 @@
 import { GetServerSideProps } from 'next'
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Box, Divider, Heading, Image, Link, Text, Menu, MenuButton, IconButton, MenuList, MenuItem  } from "@chakra-ui/react";
+import { Box, Divider, Heading, Image, Link, Text, Menu, MenuButton, IconButton, MenuList, MenuItem, useDisclosure  } from "@chakra-ui/react";
 import GameScore from '../../components/GameScore';
 import WantToPlayButton from '../../components/WantToPlayButton';
 import getReleaseDate from '../../services/date';
 import * as dayjs from 'dayjs'
+import PlayingModal from '../../components/PlayingModal';
 
 export default function Game ({ game }) {
- 
+    
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
     return (
         <>
         <Box d={"flex"} alignItems={"center"} paddingLeft={255}>
+            <PlayingModal isOpen={isOpen} onClose={onClose} game={game} />
             <Box>
                 <Image
                 src={game.cover}
@@ -30,7 +34,7 @@ export default function Game ({ game }) {
                             background="green"
                         />
                         <MenuList>
-                            <MenuItem>
+                            <MenuItem onClick={onOpen}>
                                 Currently Playing
                             </MenuItem>
                             <MenuItem>
@@ -51,7 +55,7 @@ export default function Game ({ game }) {
              <Box alignSelf={"start"} width={"75%"}>
              <Heading>{game.name}</Heading>
                 <Text>{getReleaseDate(dayjs.unix(game.first_release_date).format('DD MMM, YYYY'))}</Text>
-                <Text>{game.platforms}</Text>
+                <Text>{game.platforms.join(", ")}</Text>
                 <Text>{game.description}</Text>
                 <Divider/>   
                 <Heading as="h5" size="sm" padding={3}> Developer <Link color="red" paddingLeft={1}>{game.developer}</Link> </Heading>  
