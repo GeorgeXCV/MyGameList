@@ -28,7 +28,7 @@ const PlayingModal = ({ isOpen, onClose, game }) => {
 
     const addGame = async () => {
             isLoading(true)
-            await addToPlaying(game.id, date, platform, user)
+            await addToPlaying(game.id, platform, date, user.username)
             isLoading(false)
             onClose()
     }
