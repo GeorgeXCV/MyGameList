@@ -27,45 +27,18 @@ profileRouter.post('/backlog', async (ctx: Context) => {
         ctx.throw(400, 'Username is required.')
     }
 
+    const backlogEntry = JSON.stringify({game: gameID, platform: "Any", status: "Backlog"})
+
     const addBacklogQuery = `
-        insert into backlog(username, game, date)
-        values($1, $2, current_timestamp)
+        update users
+        set games = coalesce(games, '[]')::jsonb || $1::jsonb
+        where username = $2
         returning *
     `
-
-    // const currentDateTime = Date.now();
-    const { rows } = await query(addBacklogQuery, [username, gameID]);
+    const { rows } = await query(addBacklogQuery, [backlogEntry, username]);
     ctx.body = rows
 });
 
-profileRouter.delete('/backlog', async (ctx: Context) => {
-    const {gameID, username} = ctx.request.body 
-
-    if (!gameID) {
-        ctx.throw(400, 'Game ID is required.')
-    } else if (!username) {
-        ctx.throw(400, 'Username is required.')
-    }
-
-    const deleteBacklogQuery = ` 
-        delete from backlog where game = $1 and username = $2
-    `
-
-    const { rows } = await query(deleteBacklogQuery, [gameID, username]);
-    ctx.body = rows;
-})
-
-profileRouter.get('/backlog/:username', async (ctx: Context) => {
-    const username  = ctx.params.username
-
-    if (!username) {
-        ctx.throw(400, 'Username is required.')
-    }
-
-    const findUserBacklogQuery = `select * from backlog where username = $1`
-    const { rows } = await query(findUserBacklogQuery, [username]);
-    ctx.body = rows
-});
 
 profileRouter.post('/playing', async (ctx: Context) => {
     const { gameID, platform, date, username } = ctx.request.body
@@ -78,10 +51,10 @@ profileRouter.post('/playing', async (ctx: Context) => {
         ctx.throw(400, 'Username is required.')
     }
 
-    const gameEntry = JSON.stringify({game: gameID, platform: platform, date: date || new Date()})
+    const gameEntry = JSON.stringify({game: gameID, platform: platform, startDate: date || new Date(), status: "Playing"})
     const addPlayingQuery = `
         update users
-        set playing = coalesce(playing, '[]')::jsonb || $1::jsonb
+        set games = coalesce(games, '[]')::jsonb || $1::jsonb
         where username = $2
         returning *
     `
@@ -89,33 +62,62 @@ profileRouter.post('/playing', async (ctx: Context) => {
     ctx.body = rows
 });
 
-// profileRouter.delete('/playing', async (ctx: Context) => {
-//     const {gameID, username} = ctx.request.body 
 
-//     if (!gameID) {
-//         ctx.throw(400, 'Game ID is required.')
-//     } else if (!username) {
-//         ctx.throw(400, 'Username is required.')
-//     }
-
-//     const deletePlayingQuery = ` 
-//         delete from playing where game = $1 and username = $2
-//     `
-
-//     const { rows } = await query(deletePlayingQuery, [gameID, username]);
-//     ctx.body = rows;
-// })
-
-profileRouter.get('/playing/:username', async (ctx: Context) => {
+profileRouter.get('/games/:username', async (ctx: Context) => {
     const username  = ctx.params.username
 
     if (!username) {
         ctx.throw(400, 'Username is required.')
     }
 
-    const findUserBacklogQuery = `select playing from users where username = $1`
-    const { rows } = await query(findUserBacklogQuery, [username]);
+    const findgamesQuery = `select games from users where username = $1`
+    const { rows } = await query(findgamesQuery, [username]);
     ctx.body = rows
 });
+
+profileRouter.get('/:game/:username', async (ctx: Context) => {
+    const game = ctx.params.game
+    const username  = ctx.params.username
+    console.log(game)
+    if (!username) {
+        ctx.throw(400, 'Username is required.')
+    } else if (!game) {
+        ctx.throw(400, 'Game is required.')
+    }
+
+   const gameObj = [{
+        "game": game
+    }];
+   const gameParam = JSON.stringify(gameObj);
+
+    const findGameQuery = `
+        select games
+        from users
+        where username = $1
+        and games @> $2
+    `
+
+    const { rows } = await query(findGameQuery, [username, gameParam]);
+    ctx.body = rows
+});
+
+profileRouter.delete('/game', async (ctx: Context) => {
+    const {gameID, username} = ctx.request.body 
+
+    if (!gameID) {
+        ctx.throw(400, 'Game ID is required.')
+    } else if (!username) {
+        ctx.throw(400, 'Username is required.')
+    }
+
+    const deleteGameQuery = ` 
+        update users 
+        set games = games - $1
+        where username = $2
+    `
+
+    const { rows } = await query(deleteGameQuery, [gameID, username]);
+    ctx.body = rows;
+})
 
 export default profileRouter;
