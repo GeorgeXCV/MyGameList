@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
     const userJSON = window.localStorage.getItem('gameUser')
     if (userJSON) {
       const user = JSON.parse(userJSON)
-      setUser(user)
+      setUser(user.username)
     } else {
       setUser(null)
     }

@@ -22,7 +22,7 @@ const deleteGame = async (game: String, user: String) => {
 }
 
 
-const getGame = async ( user: String, game: String ) => {
+const getGame = async ( game: String, user: String ) => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}${game}/${user}`)
       return response.data;
 }

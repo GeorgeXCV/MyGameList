@@ -78,7 +78,7 @@ profileRouter.get('/games/:username', async (ctx: Context) => {
 profileRouter.get('/:game/:username', async (ctx: Context) => {
     const game = ctx.params.game
     const username  = ctx.params.username
-    console.log(game)
+
     if (!username) {
         ctx.throw(400, 'Username is required.')
     } else if (!game) {
@@ -89,8 +89,8 @@ profileRouter.get('/:game/:username', async (ctx: Context) => {
         "game": game
     }];
    const gameParam = JSON.stringify(gameObj);
-
-    const findGameQuery = `
+   // Will only return column if contains that game
+   const findGameQuery = `
         select games
         from users
         where username = $1
@@ -98,7 +98,9 @@ profileRouter.get('/:game/:username', async (ctx: Context) => {
     `
 
     const { rows } = await query(findGameQuery, [username, gameParam]);
-    ctx.body = rows
+    // Only return the matching game instead of the whole list
+    const result = rows[0].games.find(index => index.game === game);
+    ctx.body = result
 });
 
 profileRouter.delete('/game', async (ctx: Context) => {
