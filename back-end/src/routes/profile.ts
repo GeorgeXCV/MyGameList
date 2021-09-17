@@ -98,9 +98,14 @@ profileRouter.get('/:game/:username', async (ctx: Context) => {
     `
 
     const { rows } = await query(findGameQuery, [username, gameParam]);
-    // Only return the matching game instead of the whole list
-    const result = rows[0].games.find(index => index.game === game);
-    ctx.body = result
+    // If empty list return null so no game status is set
+    if (rows.length === 0 || !rows[0].games) {
+        ctx.body = null
+    } else {
+        // Only return the matching game instead of the whole list
+        const result = rows[0].games.find(index => index.game === game);
+        ctx.body = result
+    }
 });
 
 profileRouter.delete('/game', async (ctx: Context) => {
