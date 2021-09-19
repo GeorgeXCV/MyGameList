@@ -12,10 +12,8 @@ import {
   import { useContext, useState } from 'react';
   import PlatformButtons from './PlatformButtons';
   import { addToPlaying } from '../services/profile';
-  import { UserContext } from "../pages/_app";
 
-
-const PlayingModal = ({ isOpen, onClose, game }) => {
+const PlayingModal = ({ isOpen, onClose, game, user }) => {
     const dateObject = new Date();
     dateObject.setDate(dateObject.getDate());
     const currentDate = dateObject.toISOString().substr(0,10);
@@ -24,11 +22,10 @@ const PlayingModal = ({ isOpen, onClose, game }) => {
     const [date, setDate] = useState(currentDate)
     const [platform, setPlatform] = useState(game.platforms[0])
 
-    const user = useContext(UserContext);
 
     const addGame = async () => {
             isLoading(true)
-            await addToPlaying(game.id, platform, date, user.username)
+            await addToPlaying(game.id, platform, date, user)
             isLoading(false)
             onClose()
     }

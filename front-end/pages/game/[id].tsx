@@ -1,4 +1,6 @@
 import { GetServerSideProps } from 'next'
+import { useContext, useState, useEffect } from 'react';
+import { UserContext } from "../_app";
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Box, Divider, Heading, Image, Link, Text, Menu, MenuButton, IconButton, MenuList, MenuItem, useDisclosure  } from "@chakra-ui/react";
 import GameScore from '../../components/GameScore';
@@ -6,15 +8,31 @@ import WantToPlayButton from '../../components/WantToPlayButton';
 import getReleaseDate from '../../services/date';
 import * as dayjs from 'dayjs'
 import PlayingModal from '../../components/PlayingModal';
+import { getGame } from '../../services/profile';
+import RemoveWantToPlayButton from '../../components/RemoveWantToPlayButton';
+import RemoveCurrentlyPlayingButton from '../../components/RemoveCurrentlyPlayingButton';
 
 export default function Game ({ game }) {
-    
+
+    const user = useContext(UserContext);
+    const [gameStatus, setGameStatus] = useState(null)
     const { isOpen, onOpen, onClose } = useDisclosure()
+
+    useEffect(() => {  
+        async function checkGameStatus() {
+            if (!user) return;
+            const currentGame = await getGame(game.id, user)
+            if (currentGame.status) {
+                setGameStatus(currentGame.status)
+            }
+        }        
+        checkGameStatus();
+  })
 
     return (
         <>
         <Box d={"flex"} alignItems={"center"} paddingLeft={255}>
-            <PlayingModal isOpen={isOpen} onClose={onClose} game={game} />
+            <PlayingModal isOpen={isOpen} onClose={onClose} game={game} user={user}/>
             <Box>
                 <Image
                 src={game.cover}
@@ -24,7 +42,9 @@ export default function Game ({ game }) {
                 minHeight={275}
                 />
                 <Box>
-                <WantToPlayButton game={game} />  
+                {!gameStatus && (
+                    <>
+                    <WantToPlayButton game={game} user={user} setGameStatus={setGameStatus} />  
                     <Menu>
                         <MenuButton
                             as={IconButton}
@@ -43,11 +63,63 @@ export default function Game ({ game }) {
                             <MenuItem>
                                 Dropped                            
                             </MenuItem>
-                            <MenuItem>
-                                Want to Play
-                            </MenuItem>
                         </MenuList>
                     </Menu>
+                    </>
+                    )
+                }
+                {gameStatus === "Backlog" && (
+                    <>
+                    <RemoveWantToPlayButton  game={game} user={user} setGameStatus={setGameStatus} /> 
+                    <Menu>
+                          <MenuButton
+                              as={IconButton}
+                              aria-label="Options"
+                              icon={<ChevronDownIcon />}
+                              variant="outline"
+                              background="green"
+                          />
+                          <MenuList>
+                            <MenuItem onClick={onOpen}>
+                                    Currently Playing
+                                </MenuItem>
+                                <MenuItem>
+                                    Played
+                                </MenuItem>
+                                <MenuItem>
+                                    Dropped                            
+                                </MenuItem>
+                          </MenuList>
+                      </Menu>
+                      </>
+                )}
+                {gameStatus === "Playing" && (
+                      <>
+                      <RemoveCurrentlyPlayingButton game={game} user={user} setGameStatus={setGameStatus} />  
+                      <Menu>
+                          <MenuButton
+                              as={IconButton}
+                              aria-label="Options"
+                              icon={<ChevronDownIcon />}
+                              variant="outline"
+                              background="green"
+                          />
+                          <MenuList>
+                              <MenuItem>
+                                  Played
+                              </MenuItem>
+                              <MenuItem>
+                                  Dropped
+                              </MenuItem>
+                              <MenuItem>
+                                  Want To Play                            
+                              </MenuItem>
+                          </MenuList>
+                      </Menu>
+                      </>
+                )}
+            
+                    
             </Box>
                 <GameScore score={game.score} />   
                 <Text>{game['scored by']}</Text>

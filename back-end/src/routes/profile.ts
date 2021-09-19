@@ -117,14 +117,27 @@ profileRouter.delete('/game', async (ctx: Context) => {
         ctx.throw(400, 'Username is required.')
     }
 
-    const deleteGameQuery = ` 
-        update users 
-        set games = games - $1
-        where username = $2
+
+    const getGamesQuery = ` 
+        select games 
+        from users
+        where username = $1
     `
 
-    const { rows } = await query(deleteGameQuery, [gameID, username]);
-    ctx.body = rows;
+    const { rows } = await query(getGamesQuery, [username])
+    if (rows.length === 0 || !rows[0].games) {
+            ctx.body = null
+    } else {
+            const gameIndex = rows[0].games.findIndex(obj => obj.game == gameID);
+
+            const deleteGameQuery = ` 
+                update users 
+                set games = games - $1::int
+                where username = $2
+            `
+          const result = await query(deleteGameQuery, [gameIndex, username]);
+          ctx.body = result.rows[0];
+    }
 })
 
 export default profileRouter;
