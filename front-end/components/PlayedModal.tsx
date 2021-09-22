@@ -1,5 +1,7 @@
 import {
+    Text,
     Input,
+    Box,
     Button,
     Modal,
     ModalOverlay,
@@ -9,27 +11,39 @@ import {
     ModalBody,
     ModalCloseButton,
   } from '@chakra-ui/react';
-  import { useState } from 'react';
+  import { useEffect, useState } from 'react';
   import PlatformButtons from './PlatformButtons';
   import { addToPlaying } from '../services/profile';
 
-const PlayingModal = ({ isOpen, onClose, game, user, setGameStatus }) => {
+const PlayedModal = ({ isOpen, onClose, game, gameEntry, user }) => {
     const dateObject = new Date();
     dateObject.setDate(dateObject.getDate());
     const currentDate = dateObject.toISOString().substr(0,10);
 
     const [loading, isLoading] = useState(false)
-    const [date, setDate] = useState(currentDate)
+    const [startDate, setStartDate] = useState(currentDate)
+    const [endDate, setEndDate] = useState(currentDate)
     const [platform, setPlatform] = useState(game.platforms[0])
 
 
     const addGame = async () => {
             isLoading(true)
-            await addToPlaying(game.id, user.id, platform, date)
+            // await addToPlaying(game.id, platform, startDate, user)
             isLoading(false)
-            setGameStatus('Playing')
             onClose()
     }
+
+    useEffect(() => {  
+        if (gameEntry) {
+            if (gameEntry.platform) {
+                setPlatform(gameEntry.platform)
+            }
+            if (gameEntry.startDate) {
+                setStartDate(gameEntry.startDate)
+            }
+        }
+  }, [])
+
 
     return (
         <Modal
@@ -38,11 +52,14 @@ const PlayingModal = ({ isOpen, onClose, game, user, setGameStatus }) => {
         >
         <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Playing</ModalHeader>
+                <ModalHeader>Played</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                <PlatformButtons platforms={game.platforms} setPlatform={setPlatform} /> 
-                <Input marginTop={5} type={"date"} defaultValue={currentDate} onChange={(event) => setDate(event.target.value)}/>
+                    <PlatformButtons platforms={game.platforms} setPlatform={setPlatform} /> 
+                    <Box paddingTop={5}>
+                        <Text as="em"> Started <Input marginTop={5} type={"date"} defaultValue={"Optional"} onChange={(event) => setStartDate(event.target.value)}/> </Text>
+                        <Text as="em"> Finished <Input marginTop={5} type={"date"} defaultValue={currentDate} onChange={(event) => setEndDate(event.target.value)}/> </Text>
+                    </Box>
                 </ModalBody>
                 <ModalFooter>
                     <Button 
@@ -60,4 +77,4 @@ const PlayingModal = ({ isOpen, onClose, game, user, setGameStatus }) => {
     )
 }
 
-export default PlayingModal;
+export default PlayedModal;

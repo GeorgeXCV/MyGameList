@@ -1,20 +1,20 @@
 import axios from "axios";
 
-const addToBacklog = async ( game: String, user: String ) => {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}backlog`, {gameID: game, username: user})
+const addToBacklog = async ( gameID: String, userID: BigInt ) => {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}backlog`, {gameID: gameID, userID: userID})
       return response.data;
 }
 
-const addToPlaying = async ( game: String, platform: String, date: String, user: String ) => {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}playing`, {gameID: game, platform: platform, date: date, username: user})
+const addToPlaying = async ( gameID: String, userID: BigInt, platform: String, date: String ) => {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}playing`, {gameID: gameID, userID: userID, platform: platform, date: date})
       return response.data;
 }
 
-const deleteGame = async (game: String, user: String) => {
+const deleteGame = async (gameID: String, userID: BigInt) => {
       const config = {
             data: {
-              gameID: game,
-              username: user
+              gameID: gameID,
+              userID: userID
             }
           }
       const response = await axios.delete(`${process.env.NEXT_PUBLIC_HOST}game`, config)
@@ -22,8 +22,8 @@ const deleteGame = async (game: String, user: String) => {
 }
 
 
-const getGame = async ( game: String, user: String ) => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}${game}/${user}`)
+const getGame = async ( gameID: String, userID: BigInt ) => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}${gameID}/${userID}`)
       return response.data;
 }
 

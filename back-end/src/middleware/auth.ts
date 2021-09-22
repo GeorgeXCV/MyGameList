@@ -9,7 +9,7 @@ const generateAuthToken = (rows: any) => {
     }
 
     const token = jwt.sign(userForToken, JWT_SECRET)
-    return { token, username: userForToken.username}
+    return { token, username: userForToken.username, id: userForToken.id}
 }
 
 export default generateAuthToken;

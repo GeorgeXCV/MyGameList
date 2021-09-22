@@ -8,7 +8,7 @@ const RemoveCurrentlyPlayingButton = ({ game, user, setGameStatus }) => {
 
     const removeGame = async () => {
         isLoading(true)
-        await deleteGame(game.id, user)
+        await deleteGame(game.id, user.id)
         isLoading(false)
         setGameStatus(null)
     }

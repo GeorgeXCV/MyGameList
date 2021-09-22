@@ -8,6 +8,7 @@ import WantToPlayButton from '../../components/WantToPlayButton';
 import getReleaseDate from '../../services/date';
 import * as dayjs from 'dayjs'
 import PlayingModal from '../../components/PlayingModal';
+import PlayedModal from '../../components/PlayedModal';
 import { getGame } from '../../services/profile';
 import RemoveWantToPlayButton from '../../components/RemoveWantToPlayButton';
 import RemoveCurrentlyPlayingButton from '../../components/RemoveCurrentlyPlayingButton';
@@ -16,23 +17,27 @@ export default function Game ({ game }) {
 
     const user = useContext(UserContext);
     const [gameStatus, setGameStatus] = useState(null)
+    const [gameEntry, setGameEntry] = useState(null)
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isPlayedOpen, onOpen: onPlayedOpen, onClose: onPlayedClose } = useDisclosure();
 
     useEffect(() => {  
         async function checkGameStatus() {
             if (!user) return;
-            const currentGame = await getGame(game.id, user)
+            const currentGame = await getGame(game.id, user.id)
             if (currentGame.status) {
                 setGameStatus(currentGame.status)
+                setGameEntry(currentGame)
             }
         }        
         checkGameStatus();
-  })
+  }, [])
 
     return (
         <>
         <Box d={"flex"} alignItems={"center"} paddingLeft={255}>
-            <PlayingModal isOpen={isOpen} onClose={onClose} game={game} user={user}/>
+            <PlayingModal isOpen={isOpen} onClose={onClose} game={game} user={user} setGameStatus={setGameStatus}/>
+            <PlayedModal isOpen={isPlayedOpen} onClose={onPlayedClose} game={game} gameEntry={gameEntry} user={user}/>
             <Box>
                 <Image
                 src={game.cover}
@@ -57,7 +62,7 @@ export default function Game ({ game }) {
                             <MenuItem onClick={onOpen}>
                                 Currently Playing
                             </MenuItem>
-                            <MenuItem>
+                            <MenuItem onClick={onPlayedOpen}>
                                 Played
                             </MenuItem>
                             <MenuItem>
@@ -83,7 +88,7 @@ export default function Game ({ game }) {
                             <MenuItem onClick={onOpen}>
                                     Currently Playing
                                 </MenuItem>
-                                <MenuItem>
+                                <MenuItem onClick={onPlayedOpen}>
                                     Played
                                 </MenuItem>
                                 <MenuItem>
@@ -105,7 +110,7 @@ export default function Game ({ game }) {
                               background="green"
                           />
                           <MenuList>
-                              <MenuItem>
+                              <MenuItem onClick={onPlayedOpen}>
                                   Played
                               </MenuItem>
                               <MenuItem>

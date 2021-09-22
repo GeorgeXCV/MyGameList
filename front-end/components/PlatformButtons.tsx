@@ -5,7 +5,7 @@ const PlatformButtons = ({ platforms, setPlatform }) => {
         <Grid templateColumns="repeat(3, 1fr)" gap={6}>
                {platforms.map(platform => {
                      return (
-                         <Button onClick={() => setPlatform(platform)}>{platform}</Button>
+                         <Button key={platform} onClick={() => setPlatform(platform)}>{platform}</Button>
                      )
                  })}  
         </Grid>

@@ -8,7 +8,7 @@ const WantToPlayButton = ({ game, user, setGameStatus }) => {
 
     const addGame = async () => {
             isLoading(true)
-            await addToBacklog(game.id, user)
+            await addToBacklog(game.id, user.id)
             isLoading(false)
             setGameStatus("Backlog")
     }
