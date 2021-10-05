@@ -13,7 +13,7 @@ import {
   } from '@chakra-ui/react';
   import { useEffect, useState } from 'react';
   import PlatformButtons from './PlatformButtons';
-  import { addToPlaying } from '../services/profile';
+  import { addToPlayed } from '../services/profile';
 
 const PlayedModal = ({ isOpen, onClose, game, gameEntry, user }) => {
     const dateObject = new Date();
@@ -28,7 +28,7 @@ const PlayedModal = ({ isOpen, onClose, game, gameEntry, user }) => {
 
     const addGame = async () => {
             isLoading(true)
-            // await addToPlaying(game.id, platform, startDate, user)
+            await addToPlayed(game.id, user.id, platform, startDate, endDate)
             isLoading(false)
             onClose()
     }

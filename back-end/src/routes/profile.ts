@@ -90,6 +90,33 @@ profileRouter.post('/playing', async (ctx: Context) => {
     ctx.body = rows
 });
 
+// Add game to user played
+profileRouter.post('/played', async (ctx: Context) => {
+    const { gameID, userID, platform, startDate, endDate } = ctx.request.body
+
+    if (!gameID) {
+        ctx.throw(400, 'Game ID is required.')
+    } else if (!userID) {
+        ctx.throw(400, 'User ID is required.')
+    } else if (!platform) {
+        ctx.throw(400, 'Platform is required.')
+    } else if (!startDate) {
+        ctx.throw(400, 'Start Date is required.')
+    } else if (!endDate) {
+        ctx.throw(400, 'End Date is required.')
+    }
+
+    const addPlayingQuery = `
+        insert into users_games (game_id, user_id, status, platform, "startDate", "endDate") values ($1, $2, 'Played', $3, $4, $5)
+        on conflict (game_id, user_id) do update 
+        set status = 'Played', platform = $3, "startDate" = $4, "endDate" = $5
+        returning *
+    `
+
+    const { rows } = await query(addPlayingQuery, [gameID, userID, platform, startDate, endDate]);
+    ctx.body = rows
+});
+
 // Delete game from user profile
 profileRouter.delete('/game', async (ctx: Context) => {
     const {gameID, userID} = ctx.request.body 

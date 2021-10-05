@@ -10,6 +10,11 @@ const addToPlaying = async ( gameID: String, userID: BigInt, platform: String, d
       return response.data;
 }
 
+const addToPlayed = async ( gameID: String, userID: BigInt, platform: String, startDate: String, endDate: String ) => {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}played`, {gameID: gameID, userID: userID, platform: platform, startDate: startDate, endDate: endDate})
+      return response.data;
+}
+
 const deleteGame = async (gameID: String, userID: BigInt) => {
       const config = {
             data: {
@@ -31,6 +36,5 @@ const getGames = async ( user: String ) => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}games/${user}`)
       return response.data;
 }
-
   
-export { addToBacklog, addToPlaying, deleteGame, getGame, getGames };
+export { addToBacklog, addToPlaying, addToPlayed, deleteGame, getGame, getGames };
