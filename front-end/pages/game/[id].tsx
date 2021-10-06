@@ -12,6 +12,7 @@ import PlayedModal from '../../components/PlayedModal';
 import { getGame } from '../../services/profile';
 import RemoveWantToPlayButton from '../../components/RemoveWantToPlayButton';
 import RemoveCurrentlyPlayingButton from '../../components/RemoveCurrentlyPlayingButton';
+import RemovePlayedButton from '../../components/RemovePlayedButton';
 
 export default function Game ({ game }) {
 
@@ -37,7 +38,7 @@ export default function Game ({ game }) {
         <>
         <Box d={"flex"} alignItems={"center"} paddingLeft={255}>
             <PlayingModal isOpen={isOpen} onClose={onClose} game={game} user={user} setGameStatus={setGameStatus}/>
-            <PlayedModal isOpen={isPlayedOpen} onClose={onPlayedClose} game={game} gameEntry={gameEntry} user={user}/>
+            <PlayedModal isOpen={isPlayedOpen} onClose={onPlayedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
             <Box>
                 <Image
                 src={game.cover}
@@ -123,8 +124,32 @@ export default function Game ({ game }) {
                       </Menu>
                       </>
                 )}
-            
-                    
+                {gameStatus === "Played" && (
+                      <>
+                      <RemovePlayedButton game={game} user={user} setGameStatus={setGameStatus} />  
+                      <Menu>
+                          <MenuButton
+                              as={IconButton}
+                              aria-label="Options"
+                              icon={<ChevronDownIcon />}
+                              variant="outline"
+                              background="green"
+                          />
+                          <MenuList>
+                              <MenuItem onClick={onOpen}>
+                                  Playing
+                              </MenuItem>
+                              <MenuItem>
+                                  Dropped
+                              </MenuItem>
+                              <MenuItem>
+                                  Want To Play                            
+                              </MenuItem>
+                          </MenuList>
+                      </Menu>
+                      </>
+                )}
+             
             </Box>
                 <GameScore score={game.score} />   
                 <Text>{game['scored by']}</Text>
