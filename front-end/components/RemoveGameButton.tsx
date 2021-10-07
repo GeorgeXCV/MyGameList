@@ -1,9 +1,9 @@
 import { Button } from "@chakra-ui/react";
 import { CheckIcon } from '@chakra-ui/icons'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { deleteGame } from "../services/profile";
 
-const RemoveCurrentlyPlayingButton = ({ game, user, setGameStatus }) => {
+const RemoveGameButton = ({ game, user, status, setGameStatus }) => {
     const [loading, isLoading] = useState(false)
 
     const removeGame = async () => {
@@ -20,9 +20,9 @@ const RemoveCurrentlyPlayingButton = ({ game, user, setGameStatus }) => {
             rightIcon={<CheckIcon/>} 
             isLoading={loading} 
             loadingText={"Removing Game"}>
-                Playing
+                {status}
         </Button> 
     )
 }
 
-export default RemoveCurrentlyPlayingButton;
+export default RemoveGameButton;

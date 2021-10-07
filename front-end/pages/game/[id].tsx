@@ -9,10 +9,9 @@ import getReleaseDate from '../../services/date';
 import * as dayjs from 'dayjs'
 import PlayingModal from '../../components/PlayingModal';
 import PlayedModal from '../../components/PlayedModal';
-import { getGame } from '../../services/profile';
-import RemoveWantToPlayButton from '../../components/RemoveWantToPlayButton';
-import RemoveCurrentlyPlayingButton from '../../components/RemoveCurrentlyPlayingButton';
-import RemovePlayedButton from '../../components/RemovePlayedButton';
+import DroppedModal from '../../components/DroppedModal';
+import { getGame, addToBacklog } from '../../services/profile';
+import RemoveGameButton from '../../components/RemoveGameButton';
 
 export default function Game ({ game }) {
 
@@ -21,6 +20,7 @@ export default function Game ({ game }) {
     const [gameEntry, setGameEntry] = useState(null)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isPlayedOpen, onOpen: onPlayedOpen, onClose: onPlayedClose } = useDisclosure();
+    const { isOpen: isDroppedOpen, onOpen: onDroppedOpen, onClose: onDroppedClose } = useDisclosure();
 
     useEffect(() => {  
         async function checkGameStatus() {
@@ -34,11 +34,17 @@ export default function Game ({ game }) {
         checkGameStatus();
   }, [])
 
+    const addGame = async () => {
+        await addToBacklog(game?.id, user?.id)
+        setGameStatus("Backlog")
+    }
+
     return (
         <>
         <Box d={"flex"} alignItems={"center"} paddingLeft={255}>
             <PlayingModal isOpen={isOpen} onClose={onClose} game={game} user={user} setGameStatus={setGameStatus}/>
             <PlayedModal isOpen={isPlayedOpen} onClose={onPlayedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
+            <DroppedModal isOpen={isDroppedOpen} onClose={onDroppedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
             <Box>
                 <Image
                 src={game.cover}
@@ -66,7 +72,7 @@ export default function Game ({ game }) {
                             <MenuItem onClick={onPlayedOpen}>
                                 Played
                             </MenuItem>
-                            <MenuItem>
+                            <MenuItem onClick={onDroppedOpen}>
                                 Dropped                            
                             </MenuItem>
                         </MenuList>
@@ -76,7 +82,7 @@ export default function Game ({ game }) {
                 }
                 {gameStatus === "Backlog" && (
                     <>
-                    <RemoveWantToPlayButton  game={game} user={user} setGameStatus={setGameStatus} /> 
+                    <RemoveGameButton game={game} user={user} status={"Backlog"} setGameStatus={setGameStatus} />
                     <Menu>
                           <MenuButton
                               as={IconButton}
@@ -92,7 +98,7 @@ export default function Game ({ game }) {
                                 <MenuItem onClick={onPlayedOpen}>
                                     Played
                                 </MenuItem>
-                                <MenuItem>
+                                <MenuItem onClick={onDroppedOpen}>
                                     Dropped                            
                                 </MenuItem>
                           </MenuList>
@@ -101,7 +107,7 @@ export default function Game ({ game }) {
                 )}
                 {gameStatus === "Playing" && (
                       <>
-                      <RemoveCurrentlyPlayingButton game={game} user={user} setGameStatus={setGameStatus} />  
+                      <RemoveGameButton game={game} user={user} status={"Playing"} setGameStatus={setGameStatus} /> 
                       <Menu>
                           <MenuButton
                               as={IconButton}
@@ -114,10 +120,10 @@ export default function Game ({ game }) {
                               <MenuItem onClick={onPlayedOpen}>
                                   Played
                               </MenuItem>
-                              <MenuItem>
+                              <MenuItem onClick={onDroppedOpen}>
                                   Dropped
                               </MenuItem>
-                              <MenuItem>
+                              <MenuItem onClick={addGame}>
                                   Want To Play                            
                               </MenuItem>
                           </MenuList>
@@ -126,7 +132,7 @@ export default function Game ({ game }) {
                 )}
                 {gameStatus === "Played" && (
                       <>
-                      <RemovePlayedButton game={game} user={user} setGameStatus={setGameStatus} />  
+                      <RemoveGameButton game={game} user={user} status={"Played"} setGameStatus={setGameStatus} />  
                       <Menu>
                           <MenuButton
                               as={IconButton}
@@ -139,10 +145,35 @@ export default function Game ({ game }) {
                               <MenuItem onClick={onOpen}>
                                   Playing
                               </MenuItem>
-                              <MenuItem>
+                              <MenuItem onClick={onDroppedOpen}>
                                   Dropped
                               </MenuItem>
-                              <MenuItem>
+                              <MenuItem onClick={addGame}>
+                                  Want To Play                            
+                              </MenuItem>
+                          </MenuList>
+                      </Menu>
+                      </>
+                )}
+                 {gameStatus === "Dropped" && (
+                      <>
+                      <RemoveGameButton game={game} user={user} status={"Dropped"} setGameStatus={setGameStatus} />  
+                      <Menu>
+                          <MenuButton
+                              as={IconButton}
+                              aria-label="Options"
+                              icon={<ChevronDownIcon />}
+                              variant="outline"
+                              background="green"
+                          />
+                          <MenuList>
+                              <MenuItem onClick={onOpen}>
+                                  Playing
+                              </MenuItem>
+                              <MenuItem onClick={onPlayedOpen}>
+                                  Played
+                              </MenuItem>
+                              <MenuItem onClick={addGame}>
                                   Want To Play                            
                               </MenuItem>
                           </MenuList>
