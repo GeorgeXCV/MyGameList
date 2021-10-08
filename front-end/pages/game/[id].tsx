@@ -12,6 +12,7 @@ import PlayedModal from '../../components/PlayedModal';
 import DroppedModal from '../../components/DroppedModal';
 import { getGame, addToBacklog } from '../../services/profile';
 import RemoveGameButton from '../../components/RemoveGameButton';
+import FavouriteButton from '../../components/FavouriteButton';
 
 export default function Game ({ game }) {
 
@@ -53,6 +54,7 @@ export default function Game ({ game }) {
                 minWidth={185}
                 minHeight={275}
                 />
+                <FavouriteButton  game={game} user={user} gameEntry={gameEntry}/>
                 <Box>
                 {!gameStatus && (
                     <>

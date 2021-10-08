@@ -144,6 +144,27 @@ profileRouter.post('/dropped', async (ctx: Context) => {
     ctx.body = rows
 });
 
+// Add or remove game to favourite
+profileRouter.post('/favourite', async (ctx: Context) => {
+    const { gameID, userID, favourite } = ctx.request.body
+
+    if (!gameID) {
+        ctx.throw(400, 'Game ID is required.')
+    } else if (!userID) {
+        ctx.throw(400, 'User ID is required.')
+    }
+
+    const addFavouriteQuery = `
+        insert into users_games (game_id, user_id, favourite) values ($1, $2, $3)
+        on conflict (game_id, user_id) do update 
+        set favourite = $3
+        returning *
+    `
+
+    const { rows } = await query(addFavouriteQuery, [gameID, userID, favourite]);
+    ctx.body = rows
+});
+
 // Delete game from user profile
 profileRouter.delete('/game', async (ctx: Context) => {
     const {gameID, userID} = ctx.request.body 
