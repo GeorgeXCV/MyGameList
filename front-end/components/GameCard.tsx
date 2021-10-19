@@ -46,7 +46,7 @@ const GameCard = ({ game }) => {
               </Link>
             </NextLink>
            {game.score ?
-           <GameScore score={game.score} />
+           <GameScore score={game.score} totalRatings={null} disableOutOf10={true}/>
             : 
             <Text>
               {getReleaseDate(dayjs.unix(game.first_release_date).format('DD MMM, YYYY'))}

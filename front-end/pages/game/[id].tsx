@@ -13,15 +13,19 @@ import DroppedModal from '../../components/DroppedModal';
 import { getGame, addToBacklog } from '../../services/profile';
 import RemoveGameButton from '../../components/RemoveGameButton';
 import FavouriteButton from '../../components/FavouriteButton';
+import YourGameScore from '../../components/YourGameScore';
+import RatingModal from '../../components/RatingModal';
 
 export default function Game ({ game }) {
 
     const user = useContext(UserContext);
     const [gameStatus, setGameStatus] = useState(null)
     const [gameEntry, setGameEntry] = useState(null)
+    const [rating, setRating] = useState(null)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isPlayedOpen, onOpen: onPlayedOpen, onClose: onPlayedClose } = useDisclosure();
     const { isOpen: isDroppedOpen, onOpen: onDroppedOpen, onClose: onDroppedClose } = useDisclosure();
+    const { isOpen: isRatingOpen, onOpen: onRatingOpen, onClose: onRatingClose } = useDisclosure();
 
     useEffect(() => {  
         async function checkGameStatus() {
@@ -30,6 +34,7 @@ export default function Game ({ game }) {
             if (currentGame.status) {
                 setGameStatus(currentGame.status)
                 setGameEntry(currentGame)
+                setRating(currentGame.rating)
             }
         }        
         checkGameStatus();
@@ -46,6 +51,7 @@ export default function Game ({ game }) {
             <PlayingModal isOpen={isOpen} onClose={onClose} game={game} user={user} setGameStatus={setGameStatus}/>
             <PlayedModal isOpen={isPlayedOpen} onClose={onPlayedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
             <DroppedModal isOpen={isDroppedOpen} onClose={onDroppedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
+            <RatingModal isOpen={isRatingOpen} onClose={onRatingClose} rating={rating} setRating={setRating} game={game} user={user} />
             <Box>
                 <Image
                 src={game.cover}
@@ -184,8 +190,8 @@ export default function Game ({ game }) {
                 )}
              
             </Box>
-                <GameScore score={game.score} />   
-                <Text>{game['scored by']}</Text>
+                <GameScore score={game.score} totalRatings={game['scored by']} disableOutOf10={false}/>  
+                <YourGameScore rating={rating} onOpen={onRatingOpen}/> 
              </Box>
              <Box alignSelf={"start"} width={"75%"}>
              <Heading>{game.name}</Heading>

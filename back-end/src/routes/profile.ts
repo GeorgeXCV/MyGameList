@@ -181,6 +181,28 @@ profileRouter.delete('/game', async (ctx: Context) => {
     ctx.body = rows
 })
 
+// Rate a game
+profileRouter.post('/rating', async (ctx: Context) => {
+    const {gameID, userID, rating} = ctx.request.body 
+
+    if (!gameID) {
+        ctx.throw(400, 'Game ID is required.')
+    } else if (!userID) {
+        ctx.throw(400, 'Username is required.')
+    }
+
+    const rateGameQuery = ` 
+        insert into users_games (game_id, user_id, rating) values ($1, $2, $3)
+        on conflict (game_id, user_id) do update 
+        set rating = $3
+        returning *
+    `
+
+    const { rows } = await query(rateGameQuery, [gameID, userID, rating])
+    ctx.body = rows
+})
+
+
 
 profileRouter.get('/games/:username', async (ctx: Context) => {
     const username  = ctx.params.username

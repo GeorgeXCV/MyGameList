@@ -25,6 +25,11 @@ const favouriteGame = async ( gameID: String, userID: BigInt, favourite: Boolean
       return response.data;
 }
 
+const rateGame = async ( gameID: String, userID: BigInt, rating: Number) => {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}rating`, {gameID: gameID, userID: userID, rating: rating})
+      return response.data;
+}
+
 const deleteGame = async (gameID: String, userID: BigInt) => {
       const config = {
             data: {
@@ -47,4 +52,4 @@ const getGames = async ( user: String ) => {
       return response.data;
 }
   
-export { addToBacklog, addToPlaying, addToPlayed, addToDropped, favouriteGame, deleteGame, getGame, getGames };
+export { addToBacklog, addToPlaying, addToPlayed, addToDropped, favouriteGame, rateGame, deleteGame, getGame, getGames };

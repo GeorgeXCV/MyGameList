@@ -1,10 +1,12 @@
 import { Text, Icon } from "@chakra-ui/react"
+import kFormatter from "../services/ratings";
 
-const GameScore = ({ score }) => {
+const GameScore = ({ score, totalRatings, disableOutOf10 }) => {
     return (
+      <>
         <Text
         mt={2}
-        color="gray.500"
+        color="white.500"
         fontSize="md"
         display="flex"
         placeItems="center"
@@ -23,8 +25,12 @@ const GameScore = ({ score }) => {
             />
           </svg>
         </Icon>
-        {score}
+        {score} <Text fontSize="sm" color="grey">{disableOutOf10 === false ? "/10" : null}</Text>
         </Text>
+        {(totalRatings) && (
+          <Text fontSize="sm" color="grey">{kFormatter(totalRatings)}</Text>
+        )}
+      </>
     )
 }
 
