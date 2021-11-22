@@ -202,6 +202,49 @@ profileRouter.post('/rating', async (ctx: Context) => {
     ctx.body = rows
 })
 
+// Review a game
+profileRouter.post('/review', async (ctx: Context) => {
+    const {gameID, userID, platform, review, score} = ctx.request.body 
+
+    if (!gameID) {
+        ctx.throw(400, 'Game ID is required.')
+    } else if (!userID) {
+        ctx.throw(400, 'User ID is required.')
+    } else if (!platform) {
+        ctx.throw(400, 'Platform is required.')
+    }  else if (!review) {
+        ctx.throw(400, 'Review is required.')
+    } else if (!score) {
+        ctx.throw(400, 'Score is required.')
+    }
+
+    const rateGameQuery = ` 
+        insert into reviews (game_id, user_id, platform, review, score) values ($1, $2, $3, $4, $5)
+        on conflict (game_id, user_id) do update 
+        set review = $4, score = $5
+        returning *
+    `
+
+    const { rows } = await query(rateGameQuery, [gameID, userID, platform, review, score])
+    ctx.body = rows
+})
+
+// Delete review
+profileRouter.delete('/review', async (ctx: Context) => {
+    const {gameID, userID} = ctx.request.body 
+
+    if (!gameID) {
+        ctx.throw(400, 'Game ID is required.')
+    } else if (!userID) {
+        ctx.throw(400, 'User ID is required.')
+    }
+
+    const deleteGameQuery = ` delete from reviews where game_id = $1 and user_id = $2; `
+
+    const { rows } = await query(deleteGameQuery, [gameID, userID])
+    ctx.body = rows
+})
+
 
 
 profileRouter.get('/games/:username', async (ctx: Context) => {
