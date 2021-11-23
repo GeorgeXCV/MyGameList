@@ -28,4 +28,15 @@ gamesRouter.get('/game/:id', async (ctx: Context) => {
     }
     ctx.body = rows[0]
 })
+
+gamesRouter.get('/reviews/:id', async (ctx: Context) => {
+    const game = ctx.params.id
+    if (!game) {
+        ctx.throw(400, 'Game ID parameter is required.')
+    }
+    const findGameReviewQuery = `select * from reviews WHERE game_id = $1`
+    const { rows } = await query(findGameReviewQuery, [game]);
+    ctx.body = rows
+})
+
 export default gamesRouter;

@@ -6,6 +6,7 @@ import { Box, Divider, Heading, Image, Link, Text, Menu, MenuButton, IconButton,
 import GameScore from '../../components/GameScore';
 import WantToPlayButton from '../../components/WantToPlayButton';
 import getReleaseDate from '../../services/date';
+import getReviews from '../../services/reviews';
 import * as dayjs from 'dayjs'
 import PlayingModal from '../../components/PlayingModal';
 import PlayedModal from '../../components/PlayedModal';
@@ -15,8 +16,11 @@ import RemoveGameButton from '../../components/RemoveGameButton';
 import FavouriteButton from '../../components/FavouriteButton';
 import YourGameScore from '../../components/YourGameScore';
 import RatingModal from '../../components/RatingModal';
+import Reviews from '../../components/Reviews';
+import WriteReviewButton from '../../components/WriteReviewButton';
+import ReviewModal from '../../components/ReviewModal';
 
-export default function Game ({ game }) {
+export default function Game ({ game, reviews }) {
 
     const user = useContext(UserContext);
     const [gameStatus, setGameStatus] = useState(null)
@@ -26,6 +30,7 @@ export default function Game ({ game }) {
     const { isOpen: isPlayedOpen, onOpen: onPlayedOpen, onClose: onPlayedClose } = useDisclosure();
     const { isOpen: isDroppedOpen, onOpen: onDroppedOpen, onClose: onDroppedClose } = useDisclosure();
     const { isOpen: isRatingOpen, onOpen: onRatingOpen, onClose: onRatingClose } = useDisclosure();
+    const { isOpen: isWriteReviewOpen, onOpen: onWriteReviewOpen, onClose: onWriteReviewClose } = useDisclosure();
 
     useEffect(() => {  
         async function checkGameStatus() {
@@ -52,6 +57,7 @@ export default function Game ({ game }) {
             <PlayedModal isOpen={isPlayedOpen} onClose={onPlayedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
             <DroppedModal isOpen={isDroppedOpen} onClose={onDroppedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
             <RatingModal isOpen={isRatingOpen} onClose={onRatingClose} rating={rating} setRating={setRating} game={game} user={user} />
+            <ReviewModal isOpen={isWriteReviewOpen} onClose={onWriteReviewClose} game={game} user={user} rating={rating} />
             <Box>
                 <Image
                 src={game.cover}
@@ -192,6 +198,7 @@ export default function Game ({ game }) {
             </Box>
                 <GameScore score={game.score} totalRatings={game['scored by']} disableOutOf10={false}/>  
                 <YourGameScore rating={rating} onOpen={onRatingOpen}/> 
+                <WriteReviewButton onOpen={onWriteReviewOpen} />
              </Box>
              <Box alignSelf={"start"} width={"75%"}>
              <Heading>{game.name}</Heading>
@@ -216,9 +223,9 @@ export default function Game ({ game }) {
         </Box>
        
        <Box alignItems={"center"} paddingLeft={255}>
-           <Heading>Reviews</Heading>
-           {game['user reviews'] !== null
-               ? <Text>{game['user reviews']}</Text>
+           <Heading>User Reviews</Heading>
+           {reviews
+               ? <Reviews reviews={reviews} />
                : <Text>No reviews have been submitted for this title. Be the first to make a review here!</Text>
            }
        </Box>
@@ -229,7 +236,8 @@ export default function Game ({ game }) {
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const game = await (await fetch(`${process.env.NEXT_PUBLIC_HOST}game/${params.id}`)).json();
+    const reviews = await (await fetch(`${process.env.NEXT_PUBLIC_HOST}reviews/${params.id}`)).json();
     // const status = user ? await (await fetch(`${process.env.NEXT_PUBLIC_HOST}backlog/${user.username}`)) : false
-    return { props: { game } }
+    return { props: { game, reviews } }
   }
   

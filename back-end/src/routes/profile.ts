@@ -6,15 +6,15 @@ import bodyParser from 'koa-bodyparser';
 const profileRouter = new Router()
 profileRouter.use(bodyParser())
 
-profileRouter.get('/:username', async (ctx: Context) => {
-    const username = ctx.params.username
+profileRouter.get('/:id', async (ctx: Context) => {
+    const userID = ctx.params.id
 
-    if (!username) {
-        ctx.throw(400, 'Username is required.')
+    if (!userID) {
+        ctx.throw(400, 'User ID is required.')
     }
 
-    const findUserBacklogQuery = `select username, backlog from users where username = $1`
-    const { rows } = await query(findUserBacklogQuery, [username]);
+    const findUser = `select * from users where id = $1`
+    const { rows } = await query(findUser, [userID]);
     ctx.body = rows
 });
 
@@ -204,28 +204,30 @@ profileRouter.post('/rating', async (ctx: Context) => {
 
 // Review a game
 profileRouter.post('/review', async (ctx: Context) => {
-    const {gameID, userID, platform, review, score} = ctx.request.body 
+    const {gameID, userID, username, platform, review, rating} = ctx.request.body 
 
     if (!gameID) {
         ctx.throw(400, 'Game ID is required.')
     } else if (!userID) {
         ctx.throw(400, 'User ID is required.')
+    } else if (!username) {
+        ctx.throw(400, 'Username is required.')
     } else if (!platform) {
         ctx.throw(400, 'Platform is required.')
     }  else if (!review) {
         ctx.throw(400, 'Review is required.')
-    } else if (!score) {
-        ctx.throw(400, 'Score is required.')
+    } else if (!rating) {
+        ctx.throw(400, 'Rating is required.')
     }
 
     const rateGameQuery = ` 
-        insert into reviews (game_id, user_id, platform, review, score) values ($1, $2, $3, $4, $5)
+        insert into reviews (game_id, user_id, username, platform, review, rating, date) values ($1, $2, $3, $4, $5, $6, now())
         on conflict (game_id, user_id) do update 
-        set review = $4, score = $5
+        set platform = $4, review = $5, rating = $6
         returning *
     `
 
-    const { rows } = await query(rateGameQuery, [gameID, userID, platform, review, score])
+    const { rows } = await query(rateGameQuery, [gameID, userID, username, platform, review, rating])
     ctx.body = rows
 })
 

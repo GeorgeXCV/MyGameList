@@ -30,6 +30,22 @@ const rateGame = async ( gameID: String, userID: BigInt, rating: Number) => {
       return response.data;
 }
 
+const reviewGame = async ( gameID: String, userID: BigInt, username: String, platform: String, review: String, rating: Number,) => {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}review`, {gameID: gameID, userID: userID, username: username, platform: platform, review: review, rating: rating})
+      return response.data;
+}
+
+const deleteReview = async (gameID: String, userID: BigInt) => {
+      const config = {
+            data: {
+              gameID: gameID,
+              userID: userID
+            }
+          }
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_HOST}review`, config)
+      return response.data;
+}
+
 const deleteGame = async (gameID: String, userID: BigInt) => {
       const config = {
             data: {
@@ -51,5 +67,10 @@ const getGames = async ( user: String ) => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}games/${user}`)
       return response.data;
 }
+
+const getUser = async(userID: BigInt) => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}${userID}}`)
+      return response.data;
+}
   
-export { addToBacklog, addToPlaying, addToPlayed, addToDropped, favouriteGame, rateGame, deleteGame, getGame, getGames };
+export { addToBacklog, addToPlaying, addToPlayed, addToDropped, favouriteGame, rateGame, reviewGame, deleteReview, deleteGame, getGame, getGames, getUser };
