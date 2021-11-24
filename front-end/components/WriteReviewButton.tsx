@@ -1,12 +1,11 @@
 import {  Button  } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
 
-const WriteReviewButton = ({ onOpen }) => { 
-
+const WriteReviewButton = ({user, onLoginOpen, onModalOpen }) => { 
         return (
             <Button 
                 leftIcon={<EditIcon/>}
-                onClick={onOpen}
+                onClick={user ? onModalOpen : onLoginOpen}
                 mt={2}
                 color="white.500"
                 fontSize="md"

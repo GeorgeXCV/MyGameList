@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/react";
 import { useState } from 'react';
 import { addToBacklog } from '../services/profile'
 
-const WantToPlayButton = ({ game, user, setGameStatus }) => {
+const WantToPlayButton = ({ game, user, onLoginOpen, setGameStatus }) => {
 
     const [loading, isLoading] = useState(false)
 
@@ -16,7 +16,7 @@ const WantToPlayButton = ({ game, user, setGameStatus }) => {
     return (
         <Button 
             background={"green"} 
-            onClick={addGame} 
+            onClick={user? addGame : onLoginOpen} 
             isLoading={loading} 
             loadingText={"Adding Game"}>
                 Want to Play

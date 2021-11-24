@@ -4,7 +4,7 @@ import { favouriteGame } from "../services/profile"
 import { useEffect, useState } from 'react';
 
 
-const FavouriteButton = ({game, user, gameEntry }) => {
+const FavouriteButton = ({game, user, onLoginOpen, gameEntry }) => {
     const [favourite, setFavourite] = useState(false)
 
     useEffect(() => {  
@@ -40,7 +40,7 @@ const FavouriteButton = ({game, user, gameEntry }) => {
         return (
             <Icon 
                 as={AiOutlineHeart}
-                onClick={() => addFavourite()}
+                onClick={user ? () => addFavourite() : onLoginOpen}
                 w={8} 
                 h={8}
                 cursor={"pointer"}

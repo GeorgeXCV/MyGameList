@@ -19,6 +19,7 @@ import RatingModal from '../../components/RatingModal';
 import Reviews from '../../components/Reviews';
 import WriteReviewButton from '../../components/WriteReviewButton';
 import ReviewModal from '../../components/ReviewModal';
+import LoginModal from '../../components/LoginModal';
 
 export default function Game ({ game, reviews }) {
 
@@ -26,7 +27,8 @@ export default function Game ({ game, reviews }) {
     const [gameStatus, setGameStatus] = useState(null)
     const [gameEntry, setGameEntry] = useState(null)
     const [rating, setRating] = useState(null)
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isLoginOpen, onOpen: onLoginOpen, onClose: onLoginClose } = useDisclosure()
+    const { isOpen: isPlayingOpen, onOpen: onPlayingOpen, onClose: onPlayingClose } = useDisclosure()
     const { isOpen: isPlayedOpen, onOpen: onPlayedOpen, onClose: onPlayedClose } = useDisclosure();
     const { isOpen: isDroppedOpen, onOpen: onDroppedOpen, onClose: onDroppedClose } = useDisclosure();
     const { isOpen: isRatingOpen, onOpen: onRatingOpen, onClose: onRatingClose } = useDisclosure();
@@ -53,7 +55,8 @@ export default function Game ({ game, reviews }) {
     return (
         <>
         <Box d={"flex"} alignItems={"center"} paddingLeft={255}>
-            <PlayingModal isOpen={isOpen} onClose={onClose} game={game} user={user} setGameStatus={setGameStatus}/>
+            <LoginModal isOpen={isLoginOpen} onClose={onLoginClose}/>
+            <PlayingModal isOpen={isPlayingOpen} onClose={onPlayingClose} game={game} user={user} setGameStatus={setGameStatus}/>
             <PlayedModal isOpen={isPlayedOpen} onClose={onPlayedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
             <DroppedModal isOpen={isDroppedOpen} onClose={onDroppedClose} game={game} gameEntry={gameEntry} user={user} setGameStatus={setGameStatus}/>
             <RatingModal isOpen={isRatingOpen} onClose={onRatingClose} rating={rating} setRating={setRating} game={game} user={user} />
@@ -66,11 +69,11 @@ export default function Game ({ game, reviews }) {
                 minWidth={185}
                 minHeight={275}
                 />
-                <FavouriteButton  game={game} user={user} gameEntry={gameEntry}/>
+                <FavouriteButton  game={game} user={user} onLoginOpen={onLoginOpen} gameEntry={gameEntry}/>
                 <Box>
                 {!gameStatus && (
                     <>
-                    <WantToPlayButton game={game} user={user} setGameStatus={setGameStatus} />  
+                    <WantToPlayButton game={game} user={user} onLoginOpen={onLoginOpen} setGameStatus={setGameStatus} />  
                     <Menu>
                         <MenuButton
                             as={IconButton}
@@ -80,13 +83,13 @@ export default function Game ({ game, reviews }) {
                             background="green"
                         />
                         <MenuList>
-                            <MenuItem onClick={onOpen}>
+                            <MenuItem onClick={user ? onPlayingOpen : onLoginOpen}>
                                 Currently Playing
                             </MenuItem>
-                            <MenuItem onClick={onPlayedOpen}>
+                            <MenuItem onClick={user ? onPlayedOpen : onLoginOpen}>
                                 Played
                             </MenuItem>
-                            <MenuItem onClick={onDroppedOpen}>
+                            <MenuItem onClick={user ?  onDroppedOpen : onLoginOpen}>
                                 Dropped                            
                             </MenuItem>
                         </MenuList>
@@ -106,7 +109,7 @@ export default function Game ({ game, reviews }) {
                               background="green"
                           />
                           <MenuList>
-                            <MenuItem onClick={onOpen}>
+                            <MenuItem onClick={onPlayingOpen}>
                                     Currently Playing
                                 </MenuItem>
                                 <MenuItem onClick={onPlayedOpen}>
@@ -156,7 +159,7 @@ export default function Game ({ game, reviews }) {
                               background="green"
                           />
                           <MenuList>
-                              <MenuItem onClick={onOpen}>
+                              <MenuItem onClick={onPlayingOpen}>
                                   Playing
                               </MenuItem>
                               <MenuItem onClick={onDroppedOpen}>
@@ -181,7 +184,7 @@ export default function Game ({ game, reviews }) {
                               background="green"
                           />
                           <MenuList>
-                              <MenuItem onClick={onOpen}>
+                              <MenuItem onClick={onPlayingOpen}>
                                   Playing
                               </MenuItem>
                               <MenuItem onClick={onPlayedOpen}>
@@ -197,8 +200,8 @@ export default function Game ({ game, reviews }) {
              
             </Box>
                 <GameScore score={game.score} totalRatings={game['scored by']} disableOutOf10={false}/>  
-                <YourGameScore rating={rating} onOpen={onRatingOpen}/> 
-                <WriteReviewButton onOpen={onWriteReviewOpen} />
+                <YourGameScore user={user} onLoginOpen={onLoginOpen} onModalOpen={onRatingOpen} rating={rating}/> 
+                <WriteReviewButton user={user} onLoginOpen={onLoginOpen} onModalOpen={onWriteReviewOpen} />
              </Box>
              <Box alignSelf={"start"} width={"75%"}>
              <Heading>{game.name}</Heading>
