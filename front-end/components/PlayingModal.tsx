@@ -41,7 +41,7 @@ const PlayingModal = ({ isOpen, onClose, game, user, setGameStatus }) => {
                 <ModalHeader>Playing</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                <PlatformButtons platforms={game.platforms} setPlatform={setPlatform} /> 
+                <PlatformButtons platforms={game.platforms} setPlatform={setPlatform} defaultPlatform={platform}/> 
                 <Input marginTop={5} type={"date"} defaultValue={currentDate} onChange={(event) => setDate(event.target.value)}/>
                 </ModalBody>
                 <ModalFooter>

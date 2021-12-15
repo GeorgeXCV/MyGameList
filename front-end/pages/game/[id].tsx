@@ -6,7 +6,6 @@ import { Box, Divider, Heading, Image, Link, Text, Menu, MenuButton, IconButton,
 import GameScore from '../../components/GameScore';
 import WantToPlayButton from '../../components/WantToPlayButton';
 import getReleaseDate from '../../services/date';
-import getReviews from '../../services/reviews';
 import * as dayjs from 'dayjs'
 import PlayingModal from '../../components/PlayingModal';
 import PlayedModal from '../../components/PlayedModal';
