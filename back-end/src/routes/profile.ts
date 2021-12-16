@@ -6,15 +6,28 @@ import bodyParser from 'koa-bodyparser';
 const profileRouter = new Router()
 profileRouter.use(bodyParser())
 
-profileRouter.get('/:id', async (ctx: Context) => {
-    const userID = ctx.params.id
+
+profileRouter.get('/user/:username', async (ctx: Context) => {
+    const username  = ctx.params.username
+
+    if (!username) {
+        ctx.throw(400, 'Username is required.')
+    }
+
+    const findUserQuery = `select * from users where username = $1`
+    const { rows } = await query(findUserQuery, [username]);
+    ctx.body = rows
+});
+
+profileRouter.get('/games/:userid', async (ctx: Context) => {
+    const userID  = ctx.params.userid
 
     if (!userID) {
         ctx.throw(400, 'User ID is required.')
     }
 
-    const findUser = `select * from users where id = $1`
-    const { rows } = await query(findUser, [userID]);
+    const findUserGamesQuery = `select * from users_games where user_id = $1`
+    const { rows } = await query(findUserGamesQuery, [userID]);
     ctx.body = rows
 });
 
@@ -246,19 +259,5 @@ profileRouter.delete('/review', async (ctx: Context) => {
     const { rows } = await query(deleteGameQuery, [gameID, userID])
     ctx.body = rows
 })
-
-
-
-profileRouter.get('/games/:username', async (ctx: Context) => {
-    const username  = ctx.params.username
-
-    if (!username) {
-        ctx.throw(400, 'Username is required.')
-    }
-
-    const findgamesQuery = `select games from users where username = $1`
-    const { rows } = await query(findgamesQuery, [username]);
-    ctx.body = rows
-});
 
 export default profileRouter;
